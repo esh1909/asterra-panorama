@@ -1,0 +1,100 @@
+:root {
+  color-scheme: light;
+  font-family: Switzer, Inter, system-ui, sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #dcdfe3;
+}
+
+.hud {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  color: #1c2228;
+}
+
+.hud__top {
+  position: absolute;
+  top: 28px;
+  left: 32px;
+  max-width: min(420px, calc(100vw - 48px));
+}
+
+.hud__kicker {
+  margin: 0 0 4px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #5c6570;
+}
+
+.hud__title {
+  margin: 0;
+  font-size: clamp(22px, 3vw, 32px);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+
+.hud__hint {
+  margin: 8px 0 0;
+  font-size: 13px;
+  color: #5c6570;
+}
+
+.hud__actions {
+  pointer-events: auto;
+  position: absolute;
+  right: 28px;
+  bottom: 28px;
+  display: flex;
+  gap: 10px;
+}
+
+.hud__btn {
+  appearance: none;
+  border: 1px solid rgba(28, 34, 40, 0.12);
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(12px);
+  color: #1c2228;
+  border-radius: 999px;
+  padding: 10px 16px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 160ms ease, transform 160ms ease;
+}
+
+.hud__btn:hover {
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.hud__btn:active {
+  transform: translateY(1px);
+}
+
+.hud__btn--accent {
+  background: #2a3842;
+  color: #f4f1ea;
+  border-color: transparent;
+}
+
+.hud__btn--accent:hover {
+  background: #1d2a32;
+}
