@@ -4,10 +4,11 @@ import { ContactShadows, MeshReflectorMaterial, OrbitControls } from '@react-thr
 import * as THREE from 'three'
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js'
 import { COLORS } from '../theme.js'
+import { VIEWS } from '../views.js'
 import CarModel from './CarModel.jsx'
 
-const INITIAL_CAMERA = [4.55, 1.9, 5.2]
-const INITIAL_TARGET = [0, 0.72, 0]
+const INITIAL_CAMERA = VIEWS.threeQuarter.pos
+const INITIAL_TARGET = VIEWS.threeQuarter.target
 
 function CameraRig({ cameraApi }) {
   const { camera } = useThree()
@@ -62,38 +63,38 @@ function Studio() {
   return (
     <>
       <color attach="background" args={[COLORS.studio]} />
-      <fog attach="fog" args={[COLORS.studio, 14, 32]} />
-      <hemisphereLight intensity={0.7} color="#f4f6f8" groundColor="#b8bcc2" />
-      <ambientLight intensity={0.5} />
+      <fog attach="fog" args={[COLORS.studio, 16, 36]} />
+      <hemisphereLight intensity={1.15} color="#f7f8fa" groundColor="#c5c8cc" />
+      <ambientLight intensity={0.72} />
       <spotLight
-        position={[6, 8, 6]}
-        angle={0.45}
-        penumbra={0.7}
-        intensity={2.8}
+        position={[7, 9, 6]}
+        angle={0.48}
+        penumbra={0.75}
+        intensity={3.6}
         castShadow
         shadow-mapSize-width={2048}
         shadow-mapSize-height={2048}
       />
-      <spotLight position={[-5, 5, -4]} angle={0.5} penumbra={0.8} intensity={1.4} color="#dfe6ee" />
-      <directionalLight position={[4, 5, 4]} intensity={1.15} color="#fff7ea" />
-      <directionalLight position={[-3, 4, 5]} intensity={0.7} color="#e8f0ff" />
+      <spotLight position={[-6, 6, -3]} angle={0.55} penumbra={0.85} intensity={1.6} color="#e8eef4" />
+      <directionalLight position={[5, 6, 4]} intensity={1.35} color="#fff8ee" />
+      <directionalLight position={[-4, 5, 6]} intensity={0.85} color="#eef3ff" />
       <StudioEnvironment />
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]} receiveShadow>
         <circleGeometry args={[16, 64]} />
         <MeshReflectorMaterial
-          blur={[300, 80]}
-          resolution={256}
-          mixBlur={0.8}
-          mixStrength={0.28}
-          roughness={0.95}
-          depthScale={0.6}
+          blur={[280, 70]}
+          resolution={512}
+          mixBlur={0.75}
+          mixStrength={0.22}
+          roughness={0.96}
+          depthScale={0.5}
           minDepthThreshold={0.35}
           maxDepthThreshold={1.4}
           color={COLORS.floor}
-          metalness={0.08}
+          metalness={0.06}
         />
       </mesh>
-      <ContactShadows position={[0, 0.01, 0]} opacity={0.42} scale={10} blur={2.4} far={5} />
+      <ContactShadows position={[0, 0.012, 0]} opacity={0.38} scale={11} blur={2.6} far={5.5} />
     </>
   )
 }
@@ -106,13 +107,29 @@ export default function Scene({ doorOpen, onToggleDoor, cameraApi }) {
       gl={{
         antialias: true,
         alpha: false,
+        preserveDrawingBuffer: true,
         toneMapping: THREE.ACESFilmicToneMapping,
         outputColorSpace: THREE.SRGBColorSpace,
       }}
-      camera={{ position: INITIAL_CAMERA, fov: 32, near: 0.1, far: 60 }}
-      onCreated={({ gl }) => {
+      camera={{ position: INITIAL_CAMERA, fov: VIEWS.threeQuarter.fov, near: 0.1, far: 60 }}
+      onCreated={({ gl, scene, camera }) => {
         gl.setClearColor(COLORS.studio, 1)
-        gl.toneMappingExposure = 1.18
+        gl.toneMappingExposure = 1.32
+        window.__vega = {
+          scene,
+          camera,
+          gl,
+          setView(name) {
+            const view = VIEWS[name]
+            if (!view) return
+            camera.up.set(0, 1, 0)
+            camera.position.set(...view.pos)
+            camera.fov = view.fov
+            camera.lookAt(...view.target)
+            camera.updateProjectionMatrix()
+            gl.render(scene, camera)
+          },
+        }
       }}
     >
       <Studio />

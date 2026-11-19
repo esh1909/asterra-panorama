@@ -139,9 +139,9 @@ export default function Interior() {
         <Leather />
       </RoundedBox>
 
-      <mesh position={[0, 1.52, -0.22]} rotation={[0.015, 0, 0]}>
-        <boxGeometry args={[1.52, 0.028, 2.15]} />
-        <meshStandardMaterial color="#C9C3BB" roughness={0.7} />
+      <mesh position={[0, 1.5, -0.18]} rotation={[0.015, 0, 0]}>
+        <boxGeometry args={[1.36, 0.024, 1.55]} />
+        <meshStandardMaterial color="#2C3034" roughness={0.75} />
       </mesh>
       <mesh position={[0, 1.38, 0.5]}>
         <boxGeometry args={[0.16, 0.035, 0.07]} />
