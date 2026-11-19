@@ -5,7 +5,6 @@ import {
   createAPillarGeometry,
   createArchCladding,
   createBacklightGeometry,
-  createCPillarGeometry,
   createDeckGeometry,
   createFrontDloGlass,
   createGreenhouseHalf,
@@ -122,11 +121,10 @@ function PixelCluster({ x, y, z, color, intensity }) {
 function FrontFascia() {
   return (
     <group position={[0, 0, 2.2]}>
-      <mesh position={[0, 0.68, 0.01]} castShadow>
-        <boxGeometry args={[1.76, 0.66, 0.06]} />
+      <RoundedBox args={[1.76, 0.66, 0.07]} radius={0.03} position={[0, 0.68, 0.01]} castShadow>
         <PaintMaterial />
-      </mesh>
-      <RoundedBox args={[1.5, 0.22, 0.036]} radius={0.01} position={[0, 0.86, 0.05]}>
+      </RoundedBox>
+      <RoundedBox args={[1.5, 0.22, 0.036]} radius={0.012} position={[0, 0.86, 0.05]}>
         <meshStandardMaterial color="#101112" roughness={0.46} />
       </RoundedBox>
       <mesh position={[0, 0.86, 0.072]}>
@@ -213,7 +211,6 @@ export default function CarModel({ doorOpen, onToggleDoor }) {
   const hood = useMemo(() => createHoodGeometry(), [])
   const deck = useMemo(() => createDeckGeometry(), [])
   const aPillar = useMemo(() => createAPillarGeometry(), [])
-  const cPillar = useMemo(() => createCPillarGeometry(), [])
   const roofGlass = useMemo(() => createRoofGlassGeometry(), [])
   const roofFrame = useMemo(() => createRoofFrameGeometry(), [])
   const windshield = useMemo(() => createWindshieldGeometry(), [])
@@ -249,21 +246,15 @@ export default function CarModel({ doorOpen, onToggleDoor }) {
       <mesh geometry={aPillar} scale={[-1, 1, 1]} castShadow receiveShadow>
         <PaintMaterial />
       </mesh>
-      <mesh geometry={cPillar} castShadow receiveShadow>
-        <PaintMaterial />
-      </mesh>
-      <mesh geometry={cPillar} scale={[-1, 1, 1]} castShadow receiveShadow>
-        <PaintMaterial />
-      </mesh>
       <mesh position={[0, 1.148, 1.07]} castShadow receiveShadow>
         <boxGeometry args={[1.64, 0.055, 0.3]} />
         <PaintMaterial />
       </mesh>
-      <mesh position={[0, 1.675, 0.5]} castShadow>
+      <mesh position={[0, 1.695, 0.5]} castShadow>
         <boxGeometry args={[1.6, 0.05, 0.12]} />
         <PaintMaterial />
       </mesh>
-      <mesh position={[0, 1.675, -0.96]} castShadow>
+      <mesh position={[0, 1.695, -0.68]} castShadow>
         <boxGeometry args={[1.56, 0.05, 0.12]} />
         <PaintMaterial />
       </mesh>
@@ -310,17 +301,11 @@ export default function CarModel({ doorOpen, onToggleDoor }) {
         />
       </mesh>
 
-      <mesh position={[0, 0.32, 0]} receiveShadow>
-        <boxGeometry args={[1.76, 0.16, 1.52]} />
+      <mesh position={[0, 0.34, 0]} receiveShadow>
+        <boxGeometry args={[1.82, 0.2, 2.05]} />
         <CladdingMaterial />
       </mesh>
 
-      {[-1, 1].map((side) => (
-        <mesh key={`fender-blend-${side}`} position={[side * 0.9, 0.72, 1.92]} castShadow>
-          <boxGeometry args={[0.16, 0.48, 0.38]} />
-          <PaintMaterial />
-        </mesh>
-      ))}
       <WheelArch side={1} z={DIM.wheelZ} geometry={arch} />
       <WheelArch side={-1} z={DIM.wheelZ} geometry={arch} />
       <WheelArch side={1} z={-DIM.wheelZ} geometry={arch} />

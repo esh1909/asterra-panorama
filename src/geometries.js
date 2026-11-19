@@ -35,7 +35,7 @@ function halfWidth(z, y, yMax) {
   let w = 0.93
   if (z > 1.85) {
     const t = THREE.MathUtils.clamp((z - 1.85) / 0.35, 0, 1)
-    w *= 1 - 0.015 * t * t
+    w *= 1 - 0.02 * t * t
   }
   if (z < -1.62) {
     const t = THREE.MathUtils.clamp((-z - 1.62) / 0.56, 0, 1)
@@ -47,6 +47,8 @@ function halfWidth(z, y, yMax) {
     const lift = Math.sin(Math.PI * THREE.MathUtils.clamp((y - 0.24) / 0.78, 0, 1))
     w += 0.13 * (front + rear) * lift
   }
+  const mid = THREE.MathUtils.clamp((y - 0.5) / 0.55, 0, 1)
+  w += 0.02 * Math.sin(mid * Math.PI)
   return w
 }
 
@@ -142,13 +144,13 @@ export function createParametricHalf(doorHole = false) {
 }
 
 export function greenhouseYMax(z) {
-  if (z >= 0.48) {
-    const t = smoothstep((1.1 - z) / 0.62)
-    return lerp(1.14, 1.68, t)
+  if (z >= 0.5) {
+    const t = smoothstep((1.12 - z) / 0.62)
+    return lerp(1.145, 1.7, t)
   }
-  if (z >= -0.95) return 1.68
-  const t = smoothstep((-0.95 - z) / 0.52)
-  return lerp(1.68, 1.12, t)
+  if (z >= -0.68) return 1.7
+  const t = smoothstep((-0.68 - z) / 0.82)
+  return lerp(1.7, 1.12, t)
 }
 
 function greenhouseWidth(z, y) {
@@ -163,9 +165,9 @@ function greenhouseWidth(z, y) {
 
 function isSideGlass(z, y) {
   const yMax = greenhouseYMax(z)
-  if (y < 1.175 || y > yMax - 0.1) return false
-  if (z <= 0.52 && z >= 0.02) return true
-  if (z <= -0.14 && z >= -0.7) return true
+  if (y < 1.18 || y > yMax - 0.08) return false
+  if (z <= 0.54 && z >= 0.02) return true
+  if (z <= -0.14 && z >= -0.66) return true
   return false
 }
 
@@ -179,7 +181,8 @@ export function createHoodGeometry() {
   for (let zi = 0; zi <= zSegs; zi++) {
     const z = lerp(z0, z1, zi / zSegs)
     const yBase = silhouetteHeight(z) + 0.01
-    const w = halfWidth(z, yBase, yBase) - 0.015
+    let w = halfWidth(z, yBase, yBase) - 0.015
+    if (z > 1.85) w *= 1 - 0.08 * smoothstep((z - 1.85) / 0.33)
     for (let xi = 0; xi <= xSegs; xi++) {
       const x = lerp(-w, w, xi / xSegs)
       const nx = w > 0 ? x / w : 0
@@ -257,23 +260,23 @@ export function createAPillarGeometry() {
     [0.8, 1.145, 1.08],
     [0.9, 1.145, 0.92],
     [0.8, 1.145, 0.92],
-    [0.8, 1.675, 0.5],
-    [0.72, 1.675, 0.5],
-    [0.8, 1.675, 0.58],
-    [0.72, 1.675, 0.58],
+    [0.8, 1.7, 0.5],
+    [0.72, 1.7, 0.5],
+    [0.8, 1.7, 0.58],
+    [0.72, 1.7, 0.58],
   ])
 }
 
 export function createCPillarGeometry() {
   return pillarVolume([
-    [0.9, 1.12, -0.96],
-    [0.78, 1.12, -0.96],
-    [0.9, 1.12, -1.42],
-    [0.78, 1.12, -1.42],
-    [0.84, 1.68, -0.92],
-    [0.72, 1.68, -0.92],
-    [0.84, 1.68, -1.1],
-    [0.72, 1.68, -1.1],
+    [0.9, 1.12, -0.68],
+    [0.78, 1.12, -0.68],
+    [0.9, 1.12, -1.48],
+    [0.78, 1.12, -1.48],
+    [0.84, 1.7, -0.66],
+    [0.72, 1.7, -0.66],
+    [0.84, 1.42, -1.18],
+    [0.72, 1.42, -1.18],
   ])
 }
 
@@ -346,8 +349,8 @@ export function createWindshieldGeometry() {
   return quadGeometry([
     [-0.81, 1.148, 1.07],
     [0.81, 1.148, 1.07],
-    [0.79, 1.678, 0.5],
-    [-0.79, 1.678, 0.5],
+    [0.79, 1.695, 0.5],
+    [-0.79, 1.695, 0.5],
   ])
 }
 
@@ -371,10 +374,10 @@ export function createRearDoorGlassGeometry() {
 
 export function createBacklightGeometry() {
   return quadGeometry([
-    [-0.78, 1.13, -1.46],
-    [0.78, 1.13, -1.46],
-    [0.78, 1.675, -0.95],
-    [-0.78, 1.675, -0.95],
+    [-0.8, 1.13, -1.48],
+    [0.8, 1.13, -1.48],
+    [0.8, 1.695, -0.68],
+    [-0.8, 1.695, -0.68],
   ])
 }
 
@@ -390,9 +393,9 @@ export function createFrontDloGlass() {
 export function createRearDloGlass() {
   return quadGeometry([
     [0.885, 1.18, -0.16],
-    [0.885, 1.18, -0.72],
-    [0.85, 1.62, -0.72],
-    [0.85, 1.62, -0.16],
+    [0.885, 1.18, -0.64],
+    [0.85, 1.66, -0.64],
+    [0.85, 1.66, -0.16],
   ])
 }
 
@@ -442,32 +445,32 @@ export function createArchCladding() {
 
 export function createRoofFrameGeometry() {
   const outer = new THREE.Shape()
-  outer.moveTo(-0.86, 0.56)
-  outer.lineTo(0.86, 0.56)
-  outer.lineTo(0.84, -0.96)
-  outer.lineTo(-0.84, -0.96)
+  outer.moveTo(-0.86, 0.52)
+  outer.lineTo(0.86, 0.52)
+  outer.lineTo(0.82, -0.7)
+  outer.lineTo(-0.82, -0.7)
   outer.closePath()
   const hole = new THREE.Path()
-  hole.moveTo(-0.6, 0.36)
-  hole.lineTo(-0.58, -0.8)
-  hole.lineTo(0.58, -0.8)
-  hole.lineTo(0.6, 0.36)
+  hole.moveTo(-0.74, 0.38)
+  hole.lineTo(-0.68, -0.56)
+  hole.lineTo(0.68, -0.56)
+  hole.lineTo(0.74, 0.38)
   hole.closePath()
   outer.holes.push(hole)
-  const geometry = extrudeXZ(outer, 0.038, 0.004)
-  geometry.translate(0, 1.678, 0)
+  const geometry = extrudeXZ(outer, 0.04, 0.004)
+  geometry.translate(0, 1.698, 0)
   return geometry
 }
 
 export function createRoofGlassGeometry() {
   const shape = new THREE.Shape()
-  shape.moveTo(-0.58, 0.34)
-  shape.lineTo(0.58, 0.34)
-  shape.lineTo(0.56, -0.78)
-  shape.lineTo(-0.56, -0.78)
+  shape.moveTo(-0.72, 0.4)
+  shape.lineTo(0.72, 0.4)
+  shape.lineTo(0.66, -0.54)
+  shape.lineTo(-0.66, -0.54)
   shape.closePath()
-  const geometry = extrudeXZ(shape, 0.014, 0.002)
-  geometry.translate(0, 1.684, 0)
+  const geometry = extrudeXZ(shape, 0.016, 0.002)
+  geometry.translate(0, 1.704, 0)
   return geometry
 }
 

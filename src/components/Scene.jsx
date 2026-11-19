@@ -34,7 +34,10 @@ function CameraRig({ cameraApi }) {
       dampingFactor={0.06}
       minDistance={3.2}
       maxDistance={9.5}
+      minPolarAngle={0.55}
       maxPolarAngle={Math.PI / 2 - 0.04}
+      minAzimuthAngle={-Infinity}
+      maxAzimuthAngle={Infinity}
       target={INITIAL_TARGET}
     />
   )
@@ -112,9 +115,10 @@ export default function Scene({ doorOpen, onToggleDoor, cameraApi }) {
         outputColorSpace: THREE.SRGBColorSpace,
       }}
       camera={{ position: INITIAL_CAMERA, fov: VIEWS.threeQuarter.fov, near: 0.1, far: 60 }}
-      onCreated={({ gl, scene, camera }) => {
+      onCreated={({ gl, scene, camera, size }) => {
         gl.setClearColor(COLORS.studio, 1)
         gl.toneMappingExposure = 1.32
+        gl.setSize(size.width, size.height, false)
         window.__vega = {
           scene,
           camera,
